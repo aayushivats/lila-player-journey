@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from './store';
 import Sidebar from './components/Sidebar';
 import MapCanvas from './components/MapCanvas';
