@@ -49,58 +49,66 @@ export default function Sidebar() {
 
   const days = DAYS.filter(d => DAY_LABELS[d]);
 
+  // Helper to format seconds into MM:SS
+  const fmtDuration = (duration) => {
+    const s = Math.floor(Math.abs(duration));
+    const m = Math.floor(s / 60);
+    return `${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-scroll">
-      {/* Map */}
-      <div className="sidebar-section">
-        <div className="sidebar-label">Map</div>
-        <div className="map-tabs">
-          {MAPS.map(map => (
-            <button key={map} className={`map-tab ${selectedMap === map ? 'active' : ''}`}
-              onClick={() => setMapFilter(map)}>
-              <div className="map-tab-dot" style={{ background: MAP_COLORS[map] }}/>
-              {MAP_LABELS[map]}
-            </button>
-          ))}
+        {/* Map */}
+        <div className="sidebar-section">
+          <div className="sidebar-label">Map</div>
+          <div className="map-tabs">
+            {MAPS.map(map => (
+              <button key={map} className={`map-tab ${selectedMap === map ? 'active' : ''}`}
+                onClick={() => setMapFilter(map)}>
+                <div className="map-tab-dot" style={{ background: MAP_COLORS[map] }}/>
+                {MAP_LABELS[map]}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Day */}
-      <div className="sidebar-section">
-        <div className="sidebar-label">Date</div>
-        <div className="date-grid">
-          {days.map(day => (
-            <button key={day} className={`date-btn ${selectedDay === day ? 'active' : ''}`}
-              onClick={() => setDayFilter(day)}>
-              {DAY_LABELS[day]}
-            </button>
-          ))}
+        {/* Day */}
+        <div className="sidebar-section">
+          <div className="sidebar-label">Date</div>
+          <div className="date-grid">
+            {days.map(day => (
+              <button key={day} className={`date-btn ${selectedDay === day ? 'active' : ''}`}
+                onClick={() => setDayFilter(day)}>
+                {DAY_LABELS[day]}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Match */}
-      <div className="sidebar-section">
-        <div className="sidebar-label">Match ({filteredMatches.length})</div>
-        <div className="match-list">
-          {filteredMatches.length === 0 && (
-            <div style={{ fontFamily: 'var(--font-data)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
-              No matches for this day
-            </div>
-          )}
-          {filteredMatches.map((m, i) => (
-            <button key={m.match_id}
-              className={`match-item ${selectedMatchId === m.match_id ? 'active' : ''}`}
-              onClick={() => setMatchFilter(m.match_id)}>
-              <span style={{ color: 'var(--text-dim)' }}>#{String(i+1).padStart(2,'0')}</span>
-              {'  '}
-              <span style={{ color: 'var(--text-secondary)' }}>{m.n_players}p</span>
-              {'  '}
-              <span style={{ color: 'var(--text-dim)', fontSize: '0.6rem' }}>{m.duration_ms}ms</span>
-            </button>
-          ))}
+        {/* Match */}
+        <div className="sidebar-section">
+          <div className="sidebar-label">Match ({filteredMatches.length})</div>
+          <div className="match-list">
+            {filteredMatches.length === 0 && (
+              <div style={{ fontFamily: 'var(--font-data)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
+                No matches for this day
+              </div>
+            )}
+            {filteredMatches.map((m, i) => (
+              <button key={m.match_id}
+                className={`match-item ${selectedMatchId === m.match_id ? 'active' : ''}`}
+                onClick={() => setMatchFilter(m.match_id)}>
+                <span style={{ color: 'var(--text-dim)' }}>#{String(i+1).padStart(2,'0')}</span>
+                {'  '}
+                <span style={{ color: 'var(--text-secondary)' }}>{m.n_players}p</span>
+                {'  '}
+                {/* Fixed Duration Formatting */}
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.6rem' }}>{fmtDuration(m.duration_ms)}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
         {/* View mode */}
         <div className="sidebar-section">
@@ -134,10 +142,12 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* Event filters */}
+        {/* Event filters - Dynamic Label applied here */}
         {activeView !== 'heatmap' && (
           <div className="sidebar-section">
-            <div className="sidebar-label">Event Types</div>
+            <div className="sidebar-label">
+              {activeView === 'paths' ? 'Path Highlights' : 'Event Types'}
+            </div>
             <div className="legend-list">
               {EVENT_FILTERS.map(ef => (
                 <div key={ef.key}
