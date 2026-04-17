@@ -26,14 +26,12 @@ The Ambiguity: Raw data used absolute Unix timestamps (ts_ms), making it impossi
 The Assumption: I assumed the first recorded event for any Match ID is the "Start" point (T=0).
 The Handling: I normalized all timelines to start at 00:00. This allows a designer to look at "Minute 5" of any match to analyze mid-game rotations consistently.
 
-3. Entity Weighting (Humans vs. Bots)
-
+3. Entity Weighting (Humans vs. Bots):
 The Ambiguity: The data tracks both player types, but doesn't define which is more "important" for heatmaps.
 The Assumption: I assumed that for analyzing map lethality and chokepoints, a death is a valid signal regardless of the entity type.
 The Handling: I include both in the aggregate Heatmaps by default but built a Toggle Filter to allow designers to isolate human-only "high-skill" meta-patterns.
 
-4. Spatial Coordinate Scaling
-
+4. Spatial Coordinate Scaling:
 The Ambiguity: No "World Bounds" metadata was provided to link game units to pixels.
 The Assumption: I assumed a standard Cartesian grid where the provided minimap images represent the full playable boundary defined by the data's min/max values.
 The Handling: I developed a dynamic Coordinate Mapper that scales raw units to the 1024 x 1024 resolution of the minimap, ensuring accurate placement of markers.
