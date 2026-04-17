@@ -82,7 +82,7 @@ export default function MapCanvas() {
     const canvas = heatmapRef.current;
     if (!canvas) return;
     const pts = getHeatPoints().map(e => ({ px: e.px * SCALE, py: e.py * SCALE, weight: 1 }));
-    renderHeatmap(canvas, pts, {
+renderHeatmap(canvas, pts, {
       width: CANVAS_SIZE, height: CANVAS_SIZE,
       radius: heatmapType === 'traffic' ? 16 : 28,
       maxOpacity: 0.8, colorScheme: heatmapType,
