@@ -12,10 +12,10 @@ const EVENT_COLORS = {
 };
 
 function getEventCategory(ev) {
-  if (isKill(ev))     return 'kill';
-  if (isDeath(ev))    return 'death';
-  if (isLoot(ev))     return 'loot';
-  if (isStorm(ev))    return 'storm';
+  if (isKill(ev))      return 'kill';
+  if (isDeath(ev))     return 'death';
+  if (isLoot(ev))      return 'loot';
+  if (isStorm(ev))     return 'storm';
   return 'move';
 }
 
@@ -24,17 +24,18 @@ function sc(px, py) {
 }
 
 export default function MapCanvas() {
+  // 1. ALL HOOKS AT THE TOP
   const {
     selectedMap, selectedMatch, matchEvents, mapDayEvents,
     activeView, heatmapType,
     showBots, showHumans, eventFilters, currentTime,
   } = useStore();
 
-  const containerRef   = useRef(null);
-  const heatmapRef     = useRef(null);
+  const containerRef = useRef(null);
+  const heatmapRef = useRef(null);
   const eventCanvasRef = useRef(null);
-  const [zoom, setZoom]   = useState(1);
-  const [pan, setPan]     = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
   const [tooltip, setTooltip] = useState(null);
   const [isPanning, setIsPanning] = useState(false);
   const panStart = useRef(null);
@@ -67,7 +68,7 @@ export default function MapCanvas() {
     return mapDayEvents.filter(e => passes(e.is_bot) && fn(e));
   }, [mapDayEvents, heatmapType, passes]);
 
-  // Heatmap render
+  // 2. RENDERING EFFECTS
   useEffect(() => {
     if (activeView !== 'heatmap') return;
     const canvas = heatmapRef.current;
@@ -80,7 +81,6 @@ export default function MapCanvas() {
     });
   }, [activeView, heatmapType, getHeatPoints]);
 
-  // Event/path render
   useEffect(() => {
     const canvas = eventCanvasRef.current;
     if (!canvas) return;
@@ -93,10 +93,9 @@ export default function MapCanvas() {
     else drawEvents(ctx, events);
   }, [activeView, getVisibleEvents]);
 
-function drawPaths(ctx, events) {
+  // 3. INTERNAL DRAWING FUNCTIONS
+  function drawPaths(ctx, events) {
     const byPlayer = {};
-    
-    // Group events by player ID
     for (const e of events) {
       if (!byPlayer[e.user_id]) byPlayer[e.user_id] = [];
       byPlayer[e.user_id].push(e);
@@ -104,67 +103,27 @@ function drawPaths(ctx, events) {
 
     for (const [, evs] of Object.entries(byPlayer)) {
       const isBot = evs[0].is_bot;
-      
-      // Sort all events by time to create the path trail
-      const moves = [...evs].sort((a, b) => a.ts_ms - b.ts_ms);
+      const sorted = [...evs].sort((a, b) => a.ts_ms - b.ts_ms);
 
-      if (moves.length > 1) {
+      if (sorted.length > 1) {
         ctx.save();
         ctx.beginPath();
-        
-        // Solid, bright colors for maximum visibility
-        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff'; 
+        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff';
         ctx.lineWidth = 3;
-        ctx.globalAlpha = 1.0; 
-        ctx.setLineDash([]); // Ensure solid lines
-
-        const first = sc(moves[0].px, moves[0].py);
+        ctx.globalAlpha = 1.0;
+        ctx.setLineDash([]);
+        
+        const first = sc(sorted[0].px, sorted[0].py);
         ctx.moveTo(first.cx, first.cy);
 
-        for (let i = 1; i < moves.length; i++) {
-          const p = sc(moves[i].px, moves[i].py);
+        for (let i = 1; i < sorted.length; i++) {
+          const p = sc(sorted[i].px, sorted[i].py);
           ctx.lineTo(p.cx, p.cy);
         }
-        
         ctx.stroke();
         ctx.restore();
       }
 
-      // Draw markers (Kills/Deaths) on top of the paths
-      for (const e of evs) {
-        const cat = getEventCategory(e.ev);
-        if (cat === 'move' || !eventFilters[cat]) continue;
-        const { cx, cy } = sc(e.px, e.py);
-        drawMarker(ctx, cat, cx, cy, isBot, 4);
-      }
-    }
-  }
-
-      // Draw markers on top of the paths
-      for (const e of evs) {
-        const cat = getEventCategory(e.ev);
-        if (cat === 'move' || !eventFilters[cat]) continue;
-        const { cx, cy } = sc(e.px, e.py);
-        drawMarker(ctx, cat, cx, cy, isBot, 4);
-      }
-    }
-  }
-    for (const [, evs] of Object.entries(byPlayer)) {
-      const isBot = evs[0].is_bot;
-      // This uses every event (kills, deaths, positions) to make the line
-const moves = evs.sort((a, b) => a.ts_ms - b.ts_ms);
-      console.log(`Player ${evs[0].user_id.slice(0,5)} has ${moves.length} movement points`);
-      if (moves.length > 1) {
-        ctx.beginPath();
- // 1 = 100% opacity, 3 = Thicker line, [] = Solid line instead of dashed
-        ctx.strokeStyle = isBot ? 'rgba(255,96,32,1)' : 'rgba(0,200,255,1)';
-        ctx.lineWidth = 3; 
-        ctx.setLineDash([]);
-        const f = sc(moves[0].px, moves[0].py);
-        ctx.moveTo(f.cx, f.cy);
-        for (const e of moves.slice(1)) { const p = sc(e.px, e.py); ctx.lineTo(p.cx, p.cy); }
-        ctx.stroke(); ctx.setLineDash([]);
-      }
       for (const e of evs) {
         const cat = getEventCategory(e.ev);
         if (cat === 'move' || !eventFilters[cat]) continue;
@@ -210,6 +169,7 @@ const moves = evs.sort((a, b) => a.ts_ms - b.ts_ms);
     ctx.restore();
   }
 
+  // 4. INTERACTION HANDLERS
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
