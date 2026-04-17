@@ -2,8 +2,8 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../store';
 import { isKill, isDeath } from '../data/realData';
 
-function fmt(ms) {
-  const s = Math.floor(Math.abs(ms) / 1000);
+function fmt(timeInSeconds) {
+  const s = Math.floor(Math.abs(timeInSeconds)); // <-- Removed the / 1000
   const m = Math.floor(s / 60);
   return `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 }
@@ -26,7 +26,7 @@ export default function Timeline() {
     }
     const tick = (now) => {
       if (!lastTick.current) { lastTick.current = now; rafRef.current = requestAnimationFrame(tick); return; }
-      const dt = (now - lastTick.current) * playbackSpeed * 0.5; // slow playback to match real data density
+      const dt = ((now - lastTick.current) / 1000) * playbackSpeed; // slow playback to match real data density
       lastTick.current = now;
       stepTime(dt);
       rafRef.current = requestAnimationFrame(tick);
