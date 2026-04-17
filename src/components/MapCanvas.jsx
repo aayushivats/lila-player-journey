@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useStore, MAP_CONFIGS } from '../store';
 import { renderHeatmap } from '../utils/heatmap';
 import { isKill, isDeath, isLoot, isStorm, isMovement, eventLabel } from '../data/realData';
@@ -46,12 +46,12 @@ export default function MapCanvas() {
 
   const minimapSrc = MAP_CONFIGS[selectedMap]?.minimap || '';
 
-const passes = useCallback((is_bot) => {
+  const passes = useCallback((is_bot) => {
     // Force the value to a true/false boolean
     const isBot = is_bot === true || is_bot === 1;
 
     if (isBot && !showBots) return false;
-    if (!isBot && !showHumans) return false; // This will now catch 0 and false correctly
+    if (!isBot && !showHumans) return false; // Catch 0 and false correctly
     
     return true;
   }, [showBots, showHumans]);
@@ -116,7 +116,7 @@ const passes = useCallback((is_bot) => {
       if (sorted.length > 1) {
         ctx.save();
         ctx.beginPath();
-        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff';
+        ctx.strokeStyle = isBot ? '#ff6020' : '#00FFFF'; // Updated human path to Neon Cyan
         ctx.lineWidth = 3;
         ctx.globalAlpha = 1.0;
         ctx.setLineDash([]);
@@ -215,7 +215,7 @@ const passes = useCallback((is_bot) => {
 
   const handleMouseUp = useCallback(() => { setIsPanning(false); panStart.current = null; }, []);
 
-const liveHumanCount = useMemo(() => {
+  const liveHumanCount = useMemo(() => {
     if (!matchEvents.length) return 0;
     const humans = matchEvents.filter(e => 
       e.ts_ms <= currentTime && 
@@ -258,7 +258,8 @@ const liveHumanCount = useMemo(() => {
       <div className="coord-display">{selectedMap.toUpperCase()} · ZOOM {zoom.toFixed(1)}×</div>
       {selectedMatch && (
         <div className="player-count-badge">
-          <span className="badge-value">{liveHumanIds.size}</span> humans · {selectedMatch.n_players} total
+          {/* FIXED: Swapped liveHumanIds.size for liveHumanCount */}
+          <span className="badge-value">{liveHumanCount}</span> humans · {selectedMatch.n_players} total
         </div>
       )}
     </div>
