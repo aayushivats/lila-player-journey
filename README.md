@@ -1,6 +1,6 @@
 LILA BLACK - Player Journey Visualizer
 
-Live Deployment: https://lila-player-journey-kyce3pa8z-aayushivats-projects.vercel.app
+Live Deployment: https://lila-player-journey-two.vercel.app/
 Repository: https://github.com/aayushivats/lila-player-journey
 
 Product Overview
