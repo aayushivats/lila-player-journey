@@ -23,6 +23,16 @@ function getEventCategory(ev) {
   return 'move';
 }
 
+// Bulletproof coordinate sanitizer
+function isValidPosition(px, py) {
+  const x = Number(px);
+  const y = Number(py);
+  // Throw it out if it's missing (NaN) or exactly at the 0,0 origin
+  if (isNaN(x) || isNaN(y)) return false;
+  if (x === 0 && y === 0) return false;
+  return true;
+}
+
 function sc(px, py) {
   return { cx: px * SCALE, cy: py * SCALE };
 }
@@ -61,8 +71,8 @@ const getVisibleEvents = useCallback(() => {
       if (e.ts_ms > currentTime) return false;
       if (!passes(e.is_bot)) return false;
       
-      // NEW: Catch and remove (0,0) telemetry glitches
-      if (e.px === 0 && e.py === 0) return false; 
+      // USE THE NEW SANITIZER HERE
+      if (!isValidPosition(e.px, e.py)) return false; 
       
       const cat = getEventCategory(e.ev);
       return eventFilters[cat] !== false;
@@ -77,12 +87,11 @@ const getHeatPoints = useCallback(() => {
       loot:    e => isLoot(e.ev),
       storm:   e => isStorm(e.ev),
     }[heatmapType] || (() => false);
-    
-    // NEW: Add the (0,0) check here too
+
     return mapDayEvents.filter(e => 
       passes(e.is_bot) && 
       fn(e) && 
-      (e.px !== 0 && e.py !== 0)
+      isValidPosition(e.px, e.py)
     );
   }, [mapDayEvents, heatmapType, passes]);
 
