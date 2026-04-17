@@ -16,22 +16,22 @@
   --border-dim: rgba(80, 140, 200, 0.22);
   --border-active: rgba(80, 160, 255, 0.5);
 
-  --accent-primary: #00c8ff;
-  --accent-secondary: #ff4040;
-  --accent-gold: #ffa030;
-  --accent-green: #30ff90;
-  --accent-purple: #c060ff;
+--accent-primary: #00FFFF;   /* Electric Cyan */
+  --accent-secondary: #FF3131; /* Neon Red */
+  --accent-gold: #FFF01F;      /* High-Viz Yellow */
+  --accent-green: #39FF14;     /* Acid Green */
+  --accent-purple: #CC00FF;    /* Neon Purple */
 
   --text-primary: #d0e4f0;
   --text-secondary: #6a8fa8;
   --text-dim: #3a5268;
   --text-accent: #00c8ff;
 
-  --kill-color: #ff4040;
-  --death-color: #4080ff;
-  --loot-color: #ffa030;
-  --storm-color: #c060ff;
-  --move-color: #30ff90;
+--kill-color: #FF3131;
+  --death-color: #00FFFF;
+  --loot-color: #FFF01F;
+  --storm-color: #CC00FF;
+  --move-color: #39FF14;
   --human-color: #00c8ff;
   --bot-color: #ff6020;
 
