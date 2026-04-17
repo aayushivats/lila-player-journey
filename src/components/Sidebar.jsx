@@ -51,6 +51,7 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar">
+      <div className="sidebar-scroll">
       {/* Map */}
       <div className="sidebar-section">
         <div className="sidebar-label">Map</div>
@@ -101,7 +102,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className="sidebar-scroll">
         {/* View mode */}
         <div className="sidebar-section">
           <div className="sidebar-label">View Mode</div>
