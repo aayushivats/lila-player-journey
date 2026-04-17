@@ -93,15 +93,51 @@ export default function MapCanvas() {
     else drawEvents(ctx, events);
   }, [activeView, getVisibleEvents]);
 
-  function drawPaths(ctx, events) {
+function drawPaths(ctx, events) {
     const byPlayer = {};
     for (const e of events) {
       if (!byPlayer[e.user_id]) byPlayer[e.user_id] = [];
       byPlayer[e.user_id].push(e);
     }
+
     for (const [, evs] of Object.entries(byPlayer)) {
       const isBot = evs[0].is_bot;
-      const moves = evs.filter(e => isMovement(e.ev));
+      // Sort by time to ensure the line doesn't zig-zag randomly
+      const moves = evs.sort((a, b) => a.ts_ms - b.ts_ms);
+
+      if (moves.length > 1) {
+        ctx.save();
+        ctx.beginPath();
+        // High visibility colors
+        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff';
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = 0.8; // Make it solid enough to see
+        
+        const first = sc(moves[0].px, moves[0].py);
+        ctx.moveTo(first.cx, first.cy);
+
+        for (let i = 1; i < moves.length; i++) {
+          const p = sc(moves[i].px, moves[i].py);
+          ctx.lineTo(p.cx, p.cy);
+        }
+        
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw markers on top of the paths
+      for (const e of evs) {
+        const cat = getEventCategory(e.ev);
+        if (cat === 'move' || !eventFilters[cat]) continue;
+        const { cx, cy } = sc(e.px, e.py);
+        drawMarker(ctx, cat, cx, cy, isBot, 4);
+      }
+    }
+  }
+    for (const [, evs] of Object.entries(byPlayer)) {
+      const isBot = evs[0].is_bot;
+      // This uses every event (kills, deaths, positions) to make the line
+const moves = evs.sort((a, b) => a.ts_ms - b.ts_ms);
       console.log(`Player ${evs[0].user_id.slice(0,5)} has ${moves.length} movement points`);
       if (moves.length > 1) {
         ctx.beginPath();
