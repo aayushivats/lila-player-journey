@@ -95,6 +95,8 @@ export default function MapCanvas() {
 
 function drawPaths(ctx, events) {
     const byPlayer = {};
+    
+    // Group events by player ID
     for (const e of events) {
       if (!byPlayer[e.user_id]) byPlayer[e.user_id] = [];
       byPlayer[e.user_id].push(e);
@@ -102,17 +104,20 @@ function drawPaths(ctx, events) {
 
     for (const [, evs] of Object.entries(byPlayer)) {
       const isBot = evs[0].is_bot;
-      // Sort by time to ensure the line doesn't zig-zag randomly
-      const moves = evs.sort((a, b) => a.ts_ms - b.ts_ms);
+      
+      // Sort all events by time to create the path trail
+      const moves = [...evs].sort((a, b) => a.ts_ms - b.ts_ms);
 
       if (moves.length > 1) {
         ctx.save();
         ctx.beginPath();
-        // High visibility colors
-        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff';
-        ctx.lineWidth = 2.5;
-        ctx.globalAlpha = 0.8; // Make it solid enough to see
         
+        // Solid, bright colors for maximum visibility
+        ctx.strokeStyle = isBot ? '#ff6020' : '#00c8ff'; 
+        ctx.lineWidth = 3;
+        ctx.globalAlpha = 1.0; 
+        ctx.setLineDash([]); // Ensure solid lines
+
         const first = sc(moves[0].px, moves[0].py);
         ctx.moveTo(first.cx, first.cy);
 
@@ -124,6 +129,16 @@ function drawPaths(ctx, events) {
         ctx.stroke();
         ctx.restore();
       }
+
+      // Draw markers (Kills/Deaths) on top of the paths
+      for (const e of evs) {
+        const cat = getEventCategory(e.ev);
+        if (cat === 'move' || !eventFilters[cat]) continue;
+        const { cx, cy } = sc(e.px, e.py);
+        drawMarker(ctx, cat, cx, cy, isBot, 4);
+      }
+    }
+  }
 
       // Draw markers on top of the paths
       for (const e of evs) {
