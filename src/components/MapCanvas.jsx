@@ -104,8 +104,10 @@ export default function MapCanvas() {
       const moves = evs.filter(e => isMovement(e.ev));
       if (moves.length > 1) {
         ctx.beginPath();
-        ctx.strokeStyle = isBot ? 'rgba(255,96,32,0.2)' : 'rgba(0,200,255,0.18)';
-        ctx.lineWidth = 1; ctx.setLineDash([2,4]);
+ // 1 = 100% opacity, 3 = Thicker line, [] = Solid line instead of dashed
+        ctx.strokeStyle = isBot ? 'rgba(255,96,32,1)' : 'rgba(0,200,255,1)';
+        ctx.lineWidth = 3; 
+        ctx.setLineDash([]);
         const f = sc(moves[0].px, moves[0].py);
         ctx.moveTo(f.cx, f.cy);
         for (const e of moves.slice(1)) { const p = sc(e.px, e.py); ctx.lineTo(p.cx, p.cy); }
