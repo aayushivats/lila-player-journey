@@ -8,7 +8,11 @@ const MINIMAP_SIZE = 1024;
 const SCALE = CANVAS_SIZE / MINIMAP_SIZE;
 
 const EVENT_COLORS = {
-  kill: '#ff4040', death: '#4080ff', loot: '#ffa030', storm: '#c060ff', move: '#30ff90',
+  kill: '#FF3131', 
+  death: '#00FFFF', 
+  loot: '#FFF01F', 
+  storm: '#CC00FF', 
+  move: '#39FF14',
 };
 
 function getEventCategory(ev) {
@@ -80,8 +84,8 @@ const passes = useCallback((is_bot) => {
     const pts = getHeatPoints().map(e => ({ px: e.px * SCALE, py: e.py * SCALE, weight: 1 }));
     renderHeatmap(canvas, pts, {
       width: CANVAS_SIZE, height: CANVAS_SIZE,
-      radius: heatmapType === 'traffic' ? 14 : 22,
-      maxOpacity: 0.85, colorScheme: heatmapType,
+      radius: heatmapType === 'traffic' ? 16 : 28,
+      maxOpacity: 0.8, colorScheme: heatmapType,
     });
   }, [activeView, heatmapType, getHeatPoints]);
 
@@ -149,7 +153,7 @@ const passes = useCallback((is_bot) => {
   function drawMarker(ctx, cat, cx, cy, isBot, size) {
     const color = EVENT_COLORS[cat] || '#fff';
     ctx.save(); ctx.translate(cx, cy);
-    ctx.shadowBlur = 5; ctx.shadowColor = color;
+    ctx.shadowBlur = 12; ctx.shadowColor = color;
     ctx.fillStyle = color; ctx.strokeStyle = color;
     if (cat === 'kill') {
       ctx.lineWidth = 1.8;
