@@ -62,6 +62,11 @@ export default function Timeline() {
     ctx.stroke();
   }, [matchEvents, matchDuration, selectedMatch]);
 
+    const handleScrub = useCallback((e) => {
+    const t = parseFloat(e.target.value);
+    setCurrentTime(selectedMatch.ts_start + t * matchDuration);
+  }, [selectedMatch, matchDuration, setCurrentTime]);
+
   if (!selectedMatch) return (
     <div className="timeline" style={{ display: 'flex', alignItems: 'center', padding: '12px 16px' }}>
       <div style={{ fontFamily: 'var(--font-data)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
@@ -72,11 +77,6 @@ export default function Timeline() {
 
   const elapsed = currentTime - selectedMatch.ts_start;
   const progress = matchDuration > 0 ? Math.max(0, Math.min(1, elapsed / matchDuration)) : 0;
-
-  const handleScrub = useCallback((e) => {
-    const t = parseFloat(e.target.value);
-    setCurrentTime(selectedMatch.ts_start + t * matchDuration);
-  }, [selectedMatch, matchDuration, setCurrentTime]);
 
   const liveKills = matchEvents.filter(e => e.ts_ms <= currentTime && isKill(e.ev)).length;
   const liveDeath = matchEvents.filter(e => e.ts_ms <= currentTime && isDeath(e.ev)).length;
