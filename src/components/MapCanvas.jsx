@@ -102,6 +102,7 @@ export default function MapCanvas() {
     for (const [, evs] of Object.entries(byPlayer)) {
       const isBot = evs[0].is_bot;
       const moves = evs.filter(e => isMovement(e.ev));
+      console.log(`Player ${evs[0].user_id.slice(0,5)} has ${moves.length} movement points`);
       if (moves.length > 1) {
         ctx.beginPath();
  // 1 = 100% opacity, 3 = Thicker line, [] = Solid line instead of dashed
