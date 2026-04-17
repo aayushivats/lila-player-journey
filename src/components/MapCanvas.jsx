@@ -56,16 +56,20 @@ export default function MapCanvas() {
     return true;
   }, [showBots, showHumans]);
 
-  const getVisibleEvents = useCallback(() => {
+const getVisibleEvents = useCallback(() => {
     return matchEvents.filter(e => {
       if (e.ts_ms > currentTime) return false;
       if (!passes(e.is_bot)) return false;
+      
+      // NEW: Catch and remove (0,0) telemetry glitches
+      if (e.px === 0 && e.py === 0) return false; 
+      
       const cat = getEventCategory(e.ev);
       return eventFilters[cat] !== false;
     });
   }, [matchEvents, currentTime, passes, eventFilters]);
 
-  const getHeatPoints = useCallback(() => {
+const getHeatPoints = useCallback(() => {
     const fn = {
       kills:   e => isKill(e.ev),
       deaths:  e => isDeath(e.ev),
@@ -73,7 +77,13 @@ export default function MapCanvas() {
       loot:    e => isLoot(e.ev),
       storm:   e => isStorm(e.ev),
     }[heatmapType] || (() => false);
-    return mapDayEvents.filter(e => passes(e.is_bot) && fn(e));
+    
+    // NEW: Add the (0,0) check here too
+    return mapDayEvents.filter(e => 
+      passes(e.is_bot) && 
+      fn(e) && 
+      (e.px !== 0 && e.py !== 0)
+    );
   }, [mapDayEvents, heatmapType, passes]);
 
   // 2. RENDERING EFFECTS
