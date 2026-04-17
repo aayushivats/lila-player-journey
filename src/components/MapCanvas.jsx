@@ -42,9 +42,13 @@ export default function MapCanvas() {
 
   const minimapSrc = MAP_CONFIGS[selectedMap]?.minimap || '';
 
-  const passes = useCallback((is_bot) => {
-    if (is_bot && !showBots) return false;
-    if (!is_bot && !showHumans) return false;
+const passes = useCallback((is_bot) => {
+    // Force the value to a true/false boolean
+    const isBot = is_bot === true || is_bot === 1;
+
+    if (isBot && !showBots) return false;
+    if (!isBot && !showHumans) return false; // This will now catch 0 and false correctly
+    
     return true;
   }, [showBots, showHumans]);
 
@@ -207,9 +211,15 @@ export default function MapCanvas() {
 
   const handleMouseUp = useCallback(() => { setIsPanning(false); panStart.current = null; }, []);
 
-  const liveHumanIds = new Set(
-    matchEvents.filter(e => e.ts_ms <= currentTime && !e.is_bot && isMovement(e.ev)).map(e => e.user_id)
-  );
+const liveHumanCount = useMemo(() => {
+    if (!matchEvents.length) return 0;
+    const humans = matchEvents.filter(e => 
+      e.ts_ms <= currentTime && 
+      (e.is_bot === false || e.is_bot === 0) && // Tight check for humans
+      isMovement(e.ev)
+    );
+    return new Set(humans.map(h => h.user_id)).size;
+  }, [matchEvents, currentTime]);
 
   return (
     <div ref={containerRef} className="map-container"
