@@ -4,18 +4,18 @@ const MAP_COLORS = { AmbroseValley: '#c0392b', GrandRift: '#2980b9', Lockdown: '
 const MAP_LABELS = { AmbroseValley: 'Ambrose Valley', GrandRift: 'Grand Rift', Lockdown: 'Lockdown' };
 
 const HEATMAP_OPTIONS = [
-  { id: 'kills',   label: 'Kill Zones',       color: '#ff4040' },
-  { id: 'deaths',  label: 'Death Zones',      color: '#4080ff' },
-  { id: 'traffic', label: 'Traffic Density',  color: '#30ff90' },
-  { id: 'loot',    label: 'Loot Hotspots',    color: '#ffa030' },
-  { id: 'storm',   label: 'Storm Deaths',     color: '#c060ff' },
+  { id: 'kills',   label: 'Kill Zones',       color: '#FF3131' },
+  { id: 'deaths',  label: 'Death Zones',      color: '#00FFFF' },
+  { id: 'traffic', label: 'Traffic Density',  color: '#39FF14' },
+  { id: 'loot',    label: 'Loot Hotspots',    color: '#FFF01F' },
+  { id: 'storm',   label: 'Storm Deaths',     color: '#CC00FF' },
 ];
 
 const EVENT_FILTERS = [
-  { key: 'kill',  label: 'Kills',        color: '#ff4040', shape: 'cross' },
-  { key: 'death', label: 'Deaths',       color: '#4080ff', shape: 'circle' },
-  { key: 'loot',  label: 'Loot',         color: '#ffa030', shape: 'square' },
-  { key: 'storm', label: 'Storm Deaths', color: '#c060ff', shape: 'diamond' },
+  { key: 'kill',  label: 'Kills',        color: '#FF3131', shape: 'cross' },
+  { key: 'death', label: 'Deaths',       color: '#00FFFF', shape: 'circle' },
+  { key: 'loot',  label: 'Loot',         color: '#FFF01F', shape: 'square' },
+  { key: 'storm', label: 'Storm Deaths', color: '#CC00FF', shape: 'diamond' },
 ];
 
 function ShapeIcon({ shape, color }) {
